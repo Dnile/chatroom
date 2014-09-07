@@ -44,16 +44,27 @@
     </div>
   
 
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-<form action="http://localhost:8888/Message" id="searchForm" onsubmit="return getMsg();">
-  <input type="text" id="msg" placeholder="Message...">
-  <input type="submit" value="Search">
-</form>
-<!-- the result of the search will be rendered inside this div -->
-<div id="result">
-    
-</div>
 
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<div class="row">
+  <form action="http://localhost:8888/Message" id="searchForm" onsubmit="return getMsg();">
+    <div class="col-lg-6">
+      <div class="input-group">
+        <input type="text" id="msg" class="form-control" placeholder="Message...">
+        <span class="input-group-btn">
+          <button class="btn btn-default" type="submit">Send</button>
+        </span>
+      </div><!-- /input-group -->
+    </div><!-- /.col-lg-6 -->
+  </form>
+</div><!-- /.row -->
+
+
+<div class="panel panel-default col-lg-6">
+  <div class="panel-body" id="result">
+
+  </div>
+</div>
 
 <script>
 
@@ -65,7 +76,8 @@ function getMsg() {
       url: url,
       data: data,
       success: function(result){
-        $("#result").html("<pre>" +JSON.stringify(result, null, 2)+ "</pre>");
+        $("#msg").val("").focus();
+        $("#result").prepend("<pre>" +JSON.stringify(result, null, 4)+ "</pre>");
       }
     });
 

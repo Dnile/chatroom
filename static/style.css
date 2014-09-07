@@ -18,3 +18,8 @@ h2{
 form {
 	margin-top: 20px;
 }
+
+
+pre:empty {
+	display: none;
+}
