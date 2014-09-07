@@ -27,8 +27,20 @@ class MessagesHandler(tornado.web.RequestHandler):
 
     def handle_message(self, request):
 
+        response = dict()
 
-        response = request.arguments
+        request_args = request.arguments
+
+        try:
+            request_key = request_args.keys()[0]
+        except IndexError:
+            pass
+
+        response['message'] = request_key
+
+        response['timestamp'] = datetime.utcnow().strftime("%Y-%m-%d-%H-%M-%S")
+
+
 
         self.log_request(response)
 
