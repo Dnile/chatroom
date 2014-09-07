@@ -45,8 +45,8 @@
   
 
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-<form action="http://localhost:8888/Message" id="searchForm">
-  <input type="text" name="s" placeholder="Message...">
+<form action="http://localhost:8888/Message" id="searchForm" onsubmit="return getMsg();">
+  <input type="text" id="msg" placeholder="Message...">
   <input type="submit" value="Search">
 </form>
 <!-- the result of the search will be rendered inside this div -->
@@ -54,24 +54,29 @@
     
 </div>
 
- 
+
 <script>
-  
 
-  var url = "http://localhost:8888/Message"
-  var $form = $( this ),
-  data = $form.find( "input[name='s']" ).val();
-  var result = $.ajax({
-  dataType: "json",
-  url: url,
-  data: data
-});
+function getMsg() {
+    var url = "http://localhost:8888/Message"
+    data = $('#msg').val();
+    var result = $.ajax({
+      dataType: "json",
+      url: url,
+      data: data,
+      success: function(result){
+        $("#result").html("<pre>" +JSON.stringify(result, null, 2)+ "</pre>");
+      }
+    });
 
-var deb = $.getJSON(result);
-$("#result").html("<H1>" +deb+ "</H1>");
+
+
+
+    return false;
+}
 </script>
 
-    
+
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
