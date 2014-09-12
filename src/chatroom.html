@@ -78,6 +78,7 @@ function getMsg() {
       success: function(result){
         $("#msg").val("").focus();
         $("#result").prepend("<pre>" +JSON.stringify(result, null, 4)+ "</pre>");
+
       }
     });
 

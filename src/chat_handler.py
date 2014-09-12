@@ -2,12 +2,17 @@ __author__ = 'danielby'
 import tornado.web
 import tornado.ioloop
 import logging
+import tornado.auth
+import tornado.gen
+
 from datetime import datetime
 
 file = open('/Users/danielby/Desktop/chat_data.json', 'wb')
 
 
 logging.basicConfig(level=logging.INFO)
+
+
 
 class ChatHandler(tornado.web.RequestHandler):
 
@@ -38,7 +43,7 @@ class MessagesHandler(tornado.web.RequestHandler):
 
         response['message'] = request_key
 
-        response['timestamp'] = datetime.utcnow().strftime("%Y-%m-%d-%H-%M-%S")
+        response['timestamp'] = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
 
 
 
