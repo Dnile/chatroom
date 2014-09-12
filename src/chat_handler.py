@@ -19,12 +19,12 @@ class GoogleOAuth2LoginHandler(tornado.web.RequestHandler,
     def get(self):
         if self.get_argument('code', False):
             user = yield self.get_authenticated_user(
-                redirect_uri='http://your.site.com/auth/google',
+                redirect_uri='hhttp://ps366443.dreamhostps.com:8888/auth/google',
                 code=self.get_argument('code'))
             # Save the user with e.g. set_secure_cookie
         else:
             yield self.authorize_redirect(
-                redirect_uri='http://your.site.com/auth/google',
+                redirect_uri='http://ps366443.dreamhostps.com:8888/auth/google',
                 client_id=self.settings['google_oauth']['key'],
                 scope=['profile', 'email'],
                 response_type='code',
