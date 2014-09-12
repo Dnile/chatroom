@@ -7,11 +7,28 @@ import tornado.gen
 
 from datetime import datetime
 
-file = open('/Users/danielby/Desktop/chat_data.json', 'wb')
+file = open('/tmp/data/chat_data.json', 'wb')
 
 
 logging.basicConfig(level=logging.INFO)
 
+
+class GoogleOAuth2LoginHandler(tornado.web.RequestHandler,
+                               tornado.auth.GoogleOAuth2Mixin):
+    @tornado.gen.coroutine
+    def get(self):
+        if self.get_argument('code', False):
+            user = yield self.get_authenticated_user(
+                redirect_uri='http://your.site.com/auth/google',
+                code=self.get_argument('code'))
+            # Save the user with e.g. set_secure_cookie
+        else:
+            yield self.authorize_redirect(
+                redirect_uri='http://your.site.com/auth/google',
+                client_id=self.settings['google_oauth']['key'],
+                scope=['profile', 'email'],
+                response_type='code',
+                extra_params={'approval_prompt': 'auto'})
 
 
 class ChatHandler(tornado.web.RequestHandler):
@@ -62,7 +79,7 @@ class MessagesHandler(tornado.web.RequestHandler):
 
     def log_request(self, data):
         global file
-        #file.write(data)
+        file.write(data)
 
 if __name__=="__main__":
 
