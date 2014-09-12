@@ -79,7 +79,7 @@ class MessagesHandler(tornado.web.RequestHandler):
 
     def log_request(self, data):
         global file
-        file.write(data)
+        file.write(str(data))
 
 if __name__=="__main__":
 
