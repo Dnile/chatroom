@@ -47,7 +47,7 @@
 
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <div class="row">
-  <form action="http://localhost:8888/Message" id="searchForm" onsubmit="return getMsg();">
+  <form action="http://ps366443.dreamhostps.com:8888/Message" id="searchForm" onsubmit="return getMsg();">
     <div class="col-lg-6">
       <div class="input-group">
         <input type="text" id="msg" class="form-control" placeholder="Message...">
@@ -69,7 +69,7 @@
 <script>
 
 function getMsg() {
-    var url = "http://localhost:8888/Message"
+    var url = "http://ps366443.dreamhostps.com:8888/Message"
     data = $('#msg').val();
     var result = $.ajax({
       dataType: "json",
