@@ -4,6 +4,10 @@ import tornado.ioloop
 import logging
 import tornado.auth
 import tornado.gen
+import uuid
+import base64
+
+authenticated_user = dict()
 
 from datetime import datetime
 
@@ -12,23 +16,29 @@ file = open('/tmp/data/chat_data.json', 'wb')
 
 logging.basicConfig(level=logging.INFO)
 
+class BaseHandler(tornado.web.RequestHandler):
+    def get_current_user(self):
+        user_json = self.get_secure_cookie("user")
+        return tornado.escape.json_decode(user_json)
 
-class GoogleOAuth2LoginHandler(tornado.web.RequestHandler,
-                               tornado.auth.GoogleOAuth2Mixin):
-    @tornado.gen.coroutine
+
+class AuthHandler(BaseHandler, tornado.auth.GoogleMixin):
+    @tornado.web.asynchronous
     def get(self):
-        if self.get_argument('code', False):
-            user = yield self.get_authenticated_user(
-                redirect_uri='hhttp://ps366443.dreamhostps.com:8888/auth/google',
-                code=self.get_argument('code'))
-            # Save the user with e.g. set_secure_cookie
-        else:
-            yield self.authorize_redirect(
-                redirect_uri='http://ps366443.dreamhostps.com:8888/auth/google',
-                client_id=self.settings['google_oauth']['key'],
-                scope=['profile', 'email'],
-                response_type='code',
-                extra_params={'approval_prompt': 'auto'})
+        if self.get_argument("openid.mode", None):
+            self.get_authenticated_user(self.async_callback(self._on_auth))
+            return
+        self.authenticate_redirect()
+
+    def _on_auth(self, user):
+        global authenticated_user
+        if 'dnilekkb' not in str(user['email']):
+                self.redirect('http://corp.everything.me/404.html')
+                print "unauthorized user trying to access"
+
+        self.set_secure_cookie("user", tornado.escape.json_encode(user))
+        authenticated_user = user
+        self.redirect('/Chat')
 
 
 class ChatHandler(tornado.web.RequestHandler):
@@ -49,6 +59,8 @@ class MessagesHandler(tornado.web.RequestHandler):
 
     def handle_message(self, request):
 
+        global authenticated_user
+
         response = dict()
 
         request_args = request.arguments
@@ -61,6 +73,8 @@ class MessagesHandler(tornado.web.RequestHandler):
         response['message'] = request_key
 
         response['timestamp'] = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+
+        response['name'] = authenticated_user['name']
 
 
 
@@ -85,10 +99,12 @@ if __name__=="__main__":
 
 
     application = tornado.web.Application([
-        (r'/', ChatHandler),
+        (r'/', AuthHandler),
+        (r'/Chat', ChatHandler),
         (r'/Message', MessagesHandler),
 
 
-    ],static_path='../static', debug=True)
+    ],static_path='../static', login_url='/',debug=True,
+          cookie_secret=base64.b64encode(uuid.uuid4().bytes + uuid.uuid4().bytes))
     application.listen(8888)
     tornado.ioloop.IOLoop.instance().start()
